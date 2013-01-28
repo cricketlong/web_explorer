@@ -31,7 +31,6 @@ if(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
 }
 
 $path = $_GET["path"];
-
 //if path is invalid, go to root directory of this user
 if(empty($path))
 	$path = "/";
