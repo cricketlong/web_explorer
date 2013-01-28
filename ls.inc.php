@@ -4,22 +4,6 @@ require_once("validate_path.inc.php");
 
 function ls($root_dir, $dir)
 {
-	//validate path
-	if(validate_path($dir) == FALSE)
-	{
-		//echo $dir."<br>".$p_dir."<br>";
-		header("Location: index.php");
-	}
-
-	$p_dir = get_parent_dir($dir);
-	echo "<table width=100%>";
-	echo "<tr>";
-	echo "<td width=40><a href=\"index.php?path=/\">home</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		  <td width=50><a href=\"index.php?path=$p_dir\">parent</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		  <td><a href=\"index.php?path=$dir\">refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;$dir</td>
-		  <td align=right><a href=\"logout.php\">logout</a></td>";
-	echo "</table>";
-	echo "</tr><br>";
 	exec("ls -l $root_dir/$dir", $output);
 
 	array_shift($output);
