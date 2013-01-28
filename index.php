@@ -9,13 +9,6 @@ require_once("db_conn.php");
 
 session_start();
 
-//check cookie, wether this user has been remembered for auto login
-if(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
-{
-	//echo "auto login<br>";
-	login($_COOKIE["username"], $_COOKIE["password"]);
-}
-
 //echo $_SESSION["username"].":".$_SESSION["uid"]."<br>";
 if(empty($_SESSION["username"]) || empty($_SESSION["uid"]))
 {
@@ -28,6 +21,13 @@ if(empty($_SESSION["username"]) || empty($_SESSION["uid"]))
 		 "<p><input type=\"checkbox\" name=\"remember me\" />remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".
 		 "<input type=\"submit\" value=\"login\" /></form></div>";
 	exit;
+}
+
+//check cookie, wether this user has been remembered for auto login
+if(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
+{
+	//echo "auto login<br>";
+	login($_COOKIE["username"], $_COOKIE["password"]);
 }
 
 $path = $_GET["path"];

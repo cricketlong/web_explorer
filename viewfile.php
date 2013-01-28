@@ -2,7 +2,7 @@
 
 require("config.inc.php");
 require("ls.inc.php");
-require("validate_path.php");
+require("validate_path.inc.php");
 
 session_start();
 
