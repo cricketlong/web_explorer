@@ -1,3 +1,5 @@
+<html>
+<body>
 <?php
 
 require_once("config.inc.php");
@@ -58,8 +60,11 @@ ls(ROOT_DIR."/".$_SESSION["uid"], $path);
 
 //upload file area
 echo "<form name=\"upload\" enctype=\"multipart/form-data\" action=\"upload.php\" method=\"post\">
-	  file:&nbsp;<input name=\"filename\" type=\"file\" size=\"256\">
-	  <a href=\"javascript:upload.filename.submit()\">upload</a>
+	  file:&nbsp;<input name=\"file\" type=\"file\" size=\"32\" />
+	  <input name=\"pwd\" type=\"hidden\" value=\"$path\" />
+	  <a href=\"javascript:upload.submit()\">upload</a>
 	  </form>";
 
 ?>
+</html>
+</body>

@@ -46,7 +46,7 @@ function list_info($pwd, $info)
 				$full_path = "/".$file_name;
 			echo "<td><a href=\"download.php?filename=$full_path\">download</a></td>";
 			echo "<td><a href=\"viewfile.php?filename=$full_path\">view</a></td>";
-			echo "<td><a href=\"delete.php?filename=$full_path&pwd=$pwd\">delete</a></td>";
+			echo "<td><a href=\"delete.php?filename=$full_path\">delete</a></td>";
 		}
 		echo "</tr>";
 	}
