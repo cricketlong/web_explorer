@@ -38,9 +38,8 @@ if(empty($path))
 	$path = "/";
 
 //validate path
-if(validate_path($dir) == FALSE)
+if(validate_dir_path($dir) == FALSE)
 {
-	//echo $dir."<br>".$p_dir."<br>";
 	header("Location: index.php");
 }
 
@@ -51,7 +50,8 @@ echo "<tr>";
 echo "<td width=40><a href=\"index.php?path=/\">home</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	  <td width=50><a href=\"index.php?path=$p_dir\">parent</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	  <td><a href=\"index.php?path=$path\">refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;$path</td>
-	  <td align=right><a href=\"logout.php\">logout</a></td>";
+	  <td align=right></td>
+	  <td align=right>".$_SESSION["username"]."&nbsp;&nbsp;&nbsp;<a href=\"logout.php\">logout</a></td>";
 echo "</table>";
 echo "</tr><br>";
 

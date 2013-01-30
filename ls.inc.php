@@ -4,49 +4,60 @@ require_once("validate_path.inc.php");
 
 function ls($root_dir, $dir)
 {
-	exec("ls -l $root_dir/$dir", $output);
-
-	array_shift($output);
-	list_info($dir, $output);
+	$h_dir = opendir("$root_dir/$dir");
+	list_info($root_dir, $dir, $h_dir);
 }
 
-function list_info($pwd, $info)
+function list_info($root_dir, $pwd, $h_dir)
 {
 	echo "<table>";
 	echo "<tr>";
-	echo	"<th width=100 align=left>file name</th>
-			<th width=120 align=left>modified time</th>
-			<th width=50 align=left>size</th>";
+	echo	"<th align=left>file name</th>
+			<th align=left>modified time</th>
+			<th align=left>size</th>";
 	echo "</tr>";
 
-	foreach($info as $line)
+	while($file_name = readdir($h_dir))
 	{
-		preg_match("/^([^ ]*[ ]+)[^ ]*[ ]+[^ ]*[ ]+[^ ]*[ ]+([^ ]*)[ ]+([^ ]*[ ]+[^ ]*[ ]+[^ ]*)[ ]+([^ ]*)$/", $line, $info_array);
-		$permission = array_shift($info_array);
-		$file_name = array_pop($info_array);
-		$time = array_pop($info_array);
-		$size = array_pop($info_array);
+		//ignore hidden-files and "." and "..", 
+		if($file_name[0] == ".")
+			continue;
+
+		if($pwd == "/")
+			$path = "$root_dir/$file_name";
+		else
+			$path = "$root_dir/$pwd/$file_name";
+		$attr = stat($path);
+		$mtime = date("d.m.Y H:i", $attr["mtime"])."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		$size = $attr["size"]."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		echo "<tr>";
-		if($permission[0] == "d")
+
+		//if this item is a directory
+		if(is_dir($path))
 		{
 			if($pwd == "/")
-				echo "<td><a href=\"index.php?path=/$file_name\">$file_name</a></td>";
+				echo "<td><a href=\"index.php?path=/$file_name\">$file_name</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
 			else
-				echo "<td><a href=\"index.php?path=$pwd/$file_name\">$file_name</a></td>";
+				echo "<td><a href=\"index.php?path=$pwd/$file_name\">$file_name</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
 		}
 		else
-			echo "<td>$file_name</td>";
-		echo "<td>$time</td>";
+			echo "<td>$file_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+		echo "<td>$mtime</td>";
 		echo "<td>$size</td>";
-		if($permission[0] == "-")
+		if(!is_dir($path))
 		{
+			echo "<td><a href=\"download.php?filename=";
 			if($pwd != "/")
-				$full_path = $pwd."/".$file_name;
-			else
-				$full_path = "/".$file_name;
-			echo "<td><a href=\"download.php?filename=$full_path\">download</a></td>";
-			echo "<td><a href=\"viewfile.php?filename=$full_path\">view</a></td>";
-			echo "<td><a href=\"delete.php?filename=$full_path\">delete</a></td>";
+				echo $pwd;
+			echo "/$file_name\">download</a></td>";
+			echo "<td><a href=\"viewfile.php?filename=";
+			if($pwd != "/")
+				echo $pwd;
+			echo "/$file_name\">view</a></td>";
+			echo "<td><a href=\"delete.php?filename=";
+			if($pwd != "/")
+				echo $pwd;
+			echo "/$file_name\">delete</a></td>";
 		}
 		echo "</tr>";
 	}

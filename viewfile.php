@@ -12,7 +12,7 @@ if($filename[0] != "/")
 else
 	$full_path = ROOT_DIR."/".$_SESSION['uid'].$filename;
 
-if((empty($filename) == FALSE) && (validate_path(get_parent_dir($filename)) == TRUE) && (file_exists($full_path)))
+if((empty($filename) == FALSE) && (validate_dir_path(get_parent_dir($filename)) == TRUE) && (file_exists($full_path)))
 {
 	$content = file_get_contents($full_path);
 	if($content != FALSE)
