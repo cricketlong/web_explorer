@@ -36,15 +36,17 @@ $path = $_GET["path"];
 //if path is invalid, go to root directory of this user
 if(empty($path))
 	$path = "/";
+if($path[0] != "/")
+	$path = "/".$path;
 
 //validate path
-if(validate_dir_path($dir) == FALSE)
+if(validate_dir_path($path) == FALSE)
 {
 	header("Location: index.php");
 }
 
 //show top-banner: home, parent, refresh, path and logout
-$p_dir = get_parent_dir($dir);
+$p_dir = get_parent_dir($path);
 echo "<table width=100%>";
 echo "<tr>";
 echo "<td width=40><a href=\"index.php?path=/\">home</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -58,10 +60,18 @@ echo "</tr><br>";
 //list directory
 ls(ROOT_DIR."/".$_SESSION["uid"], $path);
 
-//upload file area
+echo "<br>";
+
+//create directory
+echo "<form name=\"mkdir\" action=\"mkdir.php\" method=\"post\">
+	  directory:&nbsp;<input name=\"dir_name\" size=\"16\" />
+	  <input name=\"pwd\" type=\"hidden\" value=\"$path\" />
+	  <a href=\"javascript:mkdir.submit()\">create</a>
+	  </form>";
+
+//upload file
 echo "<form name=\"upload\" enctype=\"multipart/form-data\" action=\"upload.php\" method=\"post\">
 	  file:&nbsp;<input name=\"file\" type=\"file\" size=\"32\" />
-	  <input name=\"pwd\" type=\"hidden\" value=\"$path\" />
 	  <a href=\"javascript:upload.submit()\">upload</a>
 	  </form>";
 

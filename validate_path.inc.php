@@ -8,15 +8,11 @@ session_start();
 function validate_dir_path($dir)
 {
 	$full_path = ROOT_DIR."/".$_SESSION["uid"].$dir;
-	if(!chdir($full_path))
+
+	if(preg_match("/\/[.]{1,2}\//", $full_path) == 1)
 		return FALSE;
-
-	$dest = getcwd();
-	$c = substr_count($dest, ROOT_DIR)."<br>";
-	if($c > 0)
-		return TRUE;
-
-	return FALSE;
+	
+	return TRUE;
 }
 
 ?>
