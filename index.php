@@ -72,6 +72,7 @@ echo "<form name=\"mkdir\" action=\"mkdir.php\" method=\"post\">
 //upload file
 echo "<form name=\"upload\" enctype=\"multipart/form-data\" action=\"upload.php\" method=\"post\">
 	  file:&nbsp;<input name=\"file\" type=\"file\" size=\"32\" />
+	  <input name=\"pwd\" type=\"hidden\" value=\"$path\" />
 	  <a href=\"javascript:upload.submit()\">upload</a>
 	  </form>";
 

@@ -25,6 +25,8 @@ if($file_error == UPLOAD_ERROR_OK)
 		echo "file name: $file_name<br>";
 		echo "file size: $file_size<br>";
 		echo "file type: $file_type<br>";
+		//echo "moved to $path<br>";
+		//echo "pwd: $pwd<br>";
 	}
 }
 else

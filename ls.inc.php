@@ -59,6 +59,16 @@ function list_info($root_dir, $pwd, $h_dir)
 				echo $pwd;
 			echo "/$file_name\">delete</a></td>";
 		}
+		else
+		{
+			echo "<td></td>";
+			echo "<td></td>";
+			echo "<td><a href=\"delete.php?dirname=";
+			if($pwd != "/")
+				echo $pwd;
+			echo "/$file_name\">delete</a></td>";
+
+		}
 		echo "</tr>";
 	}
 
