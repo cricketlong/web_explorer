@@ -11,8 +11,8 @@ $pwd = $_POST["pwd"];
 if(validate_dir_path($dir_name))
 {
 	$full_path = ROOT_DIR."/".$_SESSION["uid"]."/".$pwd."/".$dir_name;
-	if(mkdir($full_path, 0777))
-		header("Location: ".$_SERVER["HTTP_REFERER"]);
+	mkdir($full_path, 0777);
+	header("Location: ".$_SERVER["HTTP_REFERER"]);
 }
 else
 {
