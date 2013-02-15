@@ -13,6 +13,7 @@ if(validate_dir_path($dir_name))
 	$full_path = ROOT_DIR."/".$_SESSION["uid"]."/".$pwd."/".$dir_name;
 	mkdir($full_path, 0777);
 	header("Location: ".$_SERVER["HTTP_REFERER"]);
+	exit;
 }
 else
 {

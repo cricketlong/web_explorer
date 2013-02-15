@@ -43,6 +43,7 @@ if($path[0] != "/")
 if(validate_dir_path($path) == FALSE)
 {
 	header("Location: index.php");
+	exit;
 }
 
 //show top-banner: home, parent, refresh, path and logout

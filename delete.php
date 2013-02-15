@@ -33,5 +33,6 @@ if(isset($dirname) == TRUE && validate_dir_path($dirname) == TRUE)
 }
 
 header("Location: $last_url");
+exit;
 
 ?>

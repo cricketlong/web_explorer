@@ -19,6 +19,9 @@ if((empty($filename) == FALSE) && (validate_dir_path(get_parent_dir($filename)) 
 		print_r($content);
 }
 else
+{
 	header("Location: error.html");
+	exit;
+}
 
 ?>

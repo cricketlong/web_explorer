@@ -66,7 +66,7 @@ function list_info($root_dir, $pwd, $h_dir)
 			echo "<td><a href=\"delete.php?dirname=";
 			if($pwd != "/")
 				echo $pwd;
-			echo "/$file_name\">delete</a></td>";
+			echo "/$file_name\" onclick=\"return confirm('Are you sure to recursively delete directory: $file_name?')\">delete</a></td>";
 
 		}
 		echo "</tr>";
