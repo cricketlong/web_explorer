@@ -1,27 +1,32 @@
 <?php
 
-# Nimm require_once, siehe login.inc.php
-require("config.inc.php");
-require("validate_path.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
 session_start();
 
-# vermeide einfache Kopien von $_*, nimm das Original
-$dir_name = $_POST["dir_name"];
-$pwd = $_POST["pwd"];
+# tests if logged in
 
-if(validate_dir_path($dir_name))
-{
-	if(mkdir(ROOT_DIR."/".$_SESSION["uid"].$pwd."/".$dir_name, 0666))
-		# Verlass dich nicht auf den HTTP-Referer. Der ist nicht immer vorhanden
-		# oder manchmal mit Müll gefüllt. 
-		header("Location: ".$_SERVER["HTTP_REFERER"]);
+$new_path = '';
+if (!empty($_SESSION['uid']) and !empty($_POST['dir_name']) and !empty($_POST['pwd'])) {
+		
+	$new_path = trim($_POST["pwd"], '/') . '/' . trim($_POST["dir_name"], '/');
+	if(validate_dir_path($_SESSION['uid'], $new_path))
+	{
+		if(mkdir(ROOT_DIR . '/' . $_SESSION["uid"] . '/' . $new_path, DIR_MODE))
+		{
+			header('Location: ' . get_current_url() . 'index.php?path=' . rawurlencode($new_path));
+			exit;
+		}
+	}
 }
-else
-{
-	echo "Could not create directory: ".$dir_name."<br>";
-	echo "<a href=\"".$_SERVER["HTTP_REFERER"]."\">back</a>";
-}
-
-# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>
+<html>
+<head>
+	<title>Web Explorer - Error</title>
+</head>
+<body>
+	<p>Could not create directory: <?=htmlspecialchars($new_path) ?></p>
+	<p><a href="index.php">Go to root directory.</a></p>
+</body>
+</html>

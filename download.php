@@ -1,18 +1,24 @@
 <?php
 
-# Nimm require_once, siehe login.inc.php
-require("config.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
-# vermeide einfache Kopien von $_*, nimm das Original
-$filename = $_GET['filename'];
-header("Content-type: text/html");
-header("Content-type: application/octet-stream");
-header("Content-Length: ".filesize($filename));
-header("Content-Disposition: attachment; filename=$filename");
-# Nimm readfile()
-$fp = fopen(ROOT_DIR."/".$filename, 'rb');
-fpassthru($fp);
-fclose($fp);
+session_start();
 
-# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
-?>
+# test if logged in
+
+if (!empty($_SESSION['uid']) and !empty($_GET['filename']))
+{
+	$fullname = full_file_name($_SESSION['uid'], $_GET['filename']);
+	if (validate_dir_path($_SESSION['uid'], $fullname) and
+			file_exists($fullname))
+	{
+		header("Content-Type: application/octet-stream");
+		header("Content-Length: ".filesize($fullname));
+		header("Content-Disposition: attachment; filename=" . basename($_GET['filename']));
+		readfile($fullname);
+		exit;
+	}
+}
+
+readfile('error.html');

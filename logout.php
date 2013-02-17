@@ -1,22 +1,16 @@
 <?php
 
-# Nimm require_once, siehe login.inc.php
-require("config.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
 session_start();
 
 setcookie("username", "", time() - COOKIE_EXPIRE_TIME);
 setcookie("password", "", time() - COOKIE_EXPIRE_TIME);
 
-$_SESSION["uid"] = "";
-$_SESSION["username"] = "";
+$_SESSION = [];
 
 session_destroy();
 
 //jump back to index.php
-# Der Standard verlangt eine vollständige URL http://...
-header("Location: index.php");
-//echo '<script type=text/javascript>location.href="index.php"</script>';
-
-# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
-?>
+header('Location: ' . get_current_url() . 'index.php');

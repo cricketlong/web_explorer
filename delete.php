@@ -1,31 +1,22 @@
 <?php
 
-# Nimm require_once, siehe login.inc.php
-require("config.inc.php");
-require("validate_path.inc.php");
-require("ls.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
 session_start();
 
-# vermeide einfache Kopien von $_*, nimm das Original
-$filename = $_GET['filename'];
-# Der HTTP Referer ist nicht zuverlässig. Dieser Wert ist manchmal nicht vorhanden oder manipuliert
-$last_url = $_SERVER["HTTP_REFERER"];
-
-$full_path = ROOT_DIR."/".$_SESSION["uid"].$filename;
-
-# "== true" ist hier nicht notwendig
-# "Ist es wahr, dass der Pfad valide ist?" Das ist "doppelt gemoppelt"
-if(validate_dir_path(get_parent_dir($filename)) == TRUE)
+# No, no, no. No GET for data changing operations. Greetings from Crawlers.
+if (!empty($_SESSION['uid']) and !empty($_GET['filename']))
 {
-	if(file_exists($full_path) == TRUE)
+	$fullfilename = full_file_name($_SESSION['uid'], $_GET['filename']);
+	if (validate_dir_path($_SESSION['uid'], $fullfilename) && file_exists($fullfilename))
 	{
-		unlink($full_path);
+		if (unlink($fullfilename))
+		{
+			$returnpath = strpos($_GET['filename'], '/') === false ? '/' : dirname($_GET['filename']);
+			header('Location: ' . get_current_url() . 'index.php?path=' . rawurlencode($returnpath));
+		}
 	}
 }
 
-# Der Standard verlangt eine vollständige URL http://...
-header("Location: $last_url");
-
-# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
-?>
+readfile('error.html');

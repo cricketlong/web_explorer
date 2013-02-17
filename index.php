@@ -1,109 +1,148 @@
-<html>
-<body>
 <?php
-# Eine HTML-Ausgabe führt dazu, dass die HTTP-Header gesendet werden. 
-# Ab diesem Zeitpunkt kann man keine HTTP-Header-Funktionen mehr verwenden.
-# z.B. session_start() - wegen des Session Cookie, oder header()
-# Warning: session_start(): Cannot send session cookie - headers already sent by (output started at... 
 
-# require(_once) ist keine Function, die Klammern können weggelassen werden
-require_once("config.inc.php");
-require_once("ls.inc.php");
-require_once("login.inc.php");
+# Dies ist eine Version, in der ich nur den vorhandenen Code mehr oder weniger
+# anders geschrieben habe. Wenn ich es komplett selbst schreiben müsste,
+# würde ich noch mehr Dinge anders lösen.
+#
+# Wichtig ist vor allem eine Trennung nach Business Logic und Output Logic.
+# Die Business Logic (Geschäfslogik) sammelt alle Daten, verarbeitet sie und
+# stellt die für die Ausgabe notwendigen Daten bereit.
+# Die Ausgabelogik erstellt dann mit diesen Daten das HTML.
+#
+# (Ich verwende immer '' (single quotation marks) für einfache Strings.)
 
-//connect to mysql server
-require_once("db_conn.php");
+require_once "config.inc.php";
+require_once "ls.inc.php";
+require_once "login.inc.php";
+require_once 'utils.inc.php';
 
-# Session ist bereits in einem der Include-Files gestartet -> PHP Notice
-# error_reporting(E_ALL); ini_set('display_errors', 'on');
-# oder besser in der php.ini setzen
 session_start();
 
-//echo $_SESSION["username"].":".$_SESSION["uid"]."<br>";
-if(empty($_SESSION["username"]) || empty($_SESSION["uid"]))
+if (!empty($_POST['username']) && !empty($_POST['password']))
+// POST check
 {
-	echo "<div align=center><form action=\"login.php\" method=\"post\">".
-		 "<p>Username:&nbsp;<input name=\"username\" value=\"";
-		 if(isset($_COOKIE["username"]))
-			 echo $_COOKIE["username"];
-		 echo "\" />";
-	echo "<p>Password:&nbsp;<input type=\"password\" name=\"password\" />".
-		 "<p><input type=\"checkbox\" name=\"remember me\" />remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".
-		 "<input type=\"submit\" value=\"login\" /></form></div>";
-# Wenn du einfache Anführungszeichen (single quotation marks) für einen String
-# verwendest, der doppelte Anführungszeichen enthält, kannst du das Escaping sparen
-	exit;
+	if (!login($_POST['username'], md5($_POST['password'])))
+	{
+		$print_login = true;
+		$error = "Wrong username or password!";
+	}
+	else
+	{
+		//write cookies
+		if (!empty($_POST["remember_me"]))
+		{
+			//remember username
+			setcookie("username", $username, time() + COOKIE_EXPIRE_TIME);
+			setcookie("password", md5($_POST['password']), time() + COOKIE_EXPIRE_TIME);
+		}
+	}
+}
+elseif(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
+// check cookie, whether this user has been remembered for auto login
+{
+	if (!login($_COOKIE["username"], $_COOKIE["password"]))
+	{
+		$print_login = true;
+	}
+}
+elseif(empty($_SESSION["username"]) && empty($_SESSION["uid"]))
+// no session
+{
+	$print_login = true;
 }
 
-//check cookie, wether this user has been remembered for auto login
-if(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
+if (empty($print_login))
+// is logged in
 {
-	//echo "auto login<br>";
-	login($_COOKIE["username"], $_COOKIE["password"]);
+	//if path is invalid, go to root directory of this user
+	$path = empty($_GET["path"]) ? '/' : '/' . trim($_GET["path"], '/');
+	//validate path
+	if(!validate_dir_path($_SESSION['uid'], $path))
+	{
+		header('Location: ' . get_current_url() . 'index.php');
+		exit;
+	}
+	
+	//show top-banner: home, parent, refresh, path and logout
+	$parent_dir = dirname($path);
+	
+	$items = read_dir(ROOT_DIR . '/' . $_SESSION['uid'], $path);
 }
-
-$path = $_GET["path"];
-# Obwohl es sehr oft zu sehen ist, Werte aus den $_*-Arrays in einfache Variablen
-# umzukopieren, ist dies nicht besonders sinnvoll. Es wird nur durch die zusätzlichen 
-# Variablen die Komplexität erhöht und der eigentliche Ursprung des Wertes versteckt. 
-# Manchmal wird argumentiert, dass es einfacher ist, $variablen in ""-Strings einzufügen. 
-# Ja, vielleicht, aber meistens muss man htmlspecialchars() verwenden, um XSS zu verhindern.
-# Man muss also den String unterbrechen, um die Funktion aufzurufen,
-# und hat keinen Vorteil von der einfachen Variable. 
- 
-//if path is invalid, go to root directory of this user
-if(empty($path))
-	$path = "/";
-if($path[0] != "/")
-	$path = "/".$path;
-
-//validate path
-if(validate_dir_path($path) == FALSE)
-{
-# Der Standard verlangt eine vollständige URL http://...
-# Die meisten Browser kommen jedoch auch mit der Kurzform zurecht.
-	header("Location: index.php");
-}
-
-//show top-banner: home, parent, refresh, path and logout
-$p_dir = get_parent_dir($path);
-echo "<table width=100%>";
-echo "<tr>";
-# Verhindere XSS! Nimm immer Escaping Functionen wenn du Werte in einen String
-# oder ein Kommando/Statement einfügst.
-# Nimm htmlspecialchars() für das Einfügen von Daten in HTML
-# Nimm rawurlencode() für das Einfügen von Daten in URLs
-# Nimm rawurlencode() zuerst und dann htmlspecialchars(), wenn du Daten in eine URL
-# einfügst, die in HTML eingefügt wird.
-# echo '<p>' . htmlspecialchars($value) . '</p>';
-# $url = 'http://example.com/path=' . rawurlencode($value);
-# echo '<a href="' . htmlspecialchars($url) . '">htmlspecialchars($link_name)</a>'; 
-echo "<td width=40><a href=\"index.php?path=/\">home</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	  <td width=50><a href=\"index.php?path=$p_dir\">parent</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	  <td><a href=\"index.php?path=$path\">refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;$path</td>
-	  <td align=right></td>
-	  <td align=right>".$_SESSION["username"]."&nbsp;&nbsp;&nbsp;<a href=\"logout.php\">logout</a></td>";
-echo "</table>";
-echo "</tr><br>";
-
-//list directory
-ls(ROOT_DIR."/".$_SESSION["uid"], $path);
-
-echo "<br>";
-
-//create directory
-echo "<form name=\"mkdir\" action=\"mkdir.php\" method=\"post\">
-	  directory:&nbsp;<input name=\"dir_name\" size=\"16\" />
-	  <input name=\"pwd\" type=\"hidden\" value=\"$path\" />
-	  <a href=\"javascript:mkdir.submit()\">create</a>
-	  </form>";
-
-//upload file
-echo "<form name=\"upload\" enctype=\"multipart/form-data\" action=\"upload.php\" method=\"post\">
-	  file:&nbsp;<input name=\"file\" type=\"file\" size=\"32\" />
-	  <a href=\"javascript:upload.submit()\">upload</a>
-	  </form>";
-
 ?>
-</html>
+<html>
+<head>
+	<title>Web Explorer</title>
+</head>
+<body>
+<?php if (!empty($print_login)): ?>
+	<form action="" method="post" style="text-align: center;">
+		<fieldset style="display: inline-block;">
+<?php if (!empty($error)): ?>
+			<p style="color:red;"><?=htmlspecialchars($error) ?></p>
+<?php endif ?>		
+			<p>Username:&nbsp;<input name="username" value="<?=
+				isset($_COOKIE["username"]) ? $_COOKIE["username"] : '' ?>"></p>
+			<p>Password:&nbsp;<input type="password" name="password"></p>
+			<p><input type="checkbox" name="remember me">remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="login"></p>
+		</fieldset>
+	</form>
+<?php else: ?>
+	<table style="width: 100%;">
+		<tr>
+			<td width="50"><a href="index.php?path=<?=rawurlencode('/') ?>">home</a></td>
+	  	<td width="50"><a href="index.php?path=<?=rawurlencode($parent_dir) ?>">parent</a></td>
+	  	<td><a href="index.php?path=<?=rawurlencode($path) ?>">refresh</a> <?=htmlspecialchars($path) ?></td>
+	  	<td align=right></td>
+	  	<td align=right><?=htmlspecialchars($_SESSION["username"]) ?>&nbsp;<a href="logout.php">logout</a></td>
+		</tr>
+	</table>
+<?php if ($items): ?>
+	<table border="1" style="margin: 1em 0;">
+		<tr>
+			<th align="left">file name</th>
+			<th align="left">modified time</th>
+			<th align="left">size</th>
+			<th colspan="3">&nbsp;</th>
+		</tr>
+<?php foreach ($items as $item):
+	$userfilename = user_file_name($_SESSION['uid'], $item['name']);
+?>
+		<tr>
+			<td><?= is_dir($item['name']) ?
+				dir_item($item['name'], $_SESSION['uid'], $path) :
+				htmlspecialchars(user_file_name($_SESSION['uid'], $item['name'], $path)) ?></td>
+			<td><?=date('d.m.Y H:i', $item['mtime']) ?></td>
+			<td><?=number_format($item['size']) ?></td>
+<?php if (!is_dir($item['name'])):?>
+			<td><a href="download.php?filename=<?=rawurlencode($userfilename) ?>">download</a></td>
+			<td><a href="viewfile.php?filename=<?=rawurlencode($userfilename) ?>">view</a></td>
+			<td><a href="delete.php?filename=<?=rawurlencode($userfilename) ?>">delete</a></td>
+<?php else:?>
+			<td colspan="3">&nbsp;</td>
+<?php endif;?>
+		</tr>
+<?php endforeach ?>	
+	</table>
+
+<?php else: ?>
+	<p>No items.</p>
+<?php endif ?>
+
+<?php /* create directory */ ?>
+	<form name="mkdir" action="mkdir.php" method="post">
+	  directory:&nbsp;<input name="dir_name" size="16">
+	  <input name="pwd" type="hidden" value="<?=htmlspecialchars($path) ?>">
+	  <input type="submit" value="create">
+	</form>
+
+<?php /* upload file */ ?>
+  
+	<form name="upload" enctype="multipart/form-data" action="upload.php" method="post">
+		<input type="hidden" name="pwd" value="<?=htmlspecialchars($path) ?>">
+	  file:&nbsp;<input name="file" type="file" size="32">
+	  <input type="submit" value="upload">
+	</form>
+	
+<?php endif; ?>
 </body>
+</html>
