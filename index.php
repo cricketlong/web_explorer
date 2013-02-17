@@ -1,23 +1,23 @@
 <html>
 <body>
 <?php
-# Start of HTML output results in sending HTTP-Headers
-# After this point you can't use any any header modifiying funktions
-# like session_start() - due to the Session Cookie, or header()
+# Eine HTML-Ausgabe führt dazu, dass die HTTP-Header gesendet werden. 
+# Ab diesem Zeitpunkt kann man keine HTTP-Header-Funktionen mehr verwenden.
+# z.B. session_start() - wegen des Session Cookie, oder header()
 # Warning: session_start(): Cannot send session cookie - headers already sent by (output started at... 
-# You can use output_buffering, but I wouldn't rely on it.
 
+# require(_once) ist keine Function, die Klammern können weggelassen werden
 require_once("config.inc.php");
 require_once("ls.inc.php");
 require_once("login.inc.php");
 
-# require is not a function, you can omit the braces
-
 //connect to mysql server
 require_once("db_conn.php");
 
+# Session ist bereits in einem der Include-Files gestartet -> PHP Notice
+# error_reporting(E_ALL); ini_set('display_errors', 'on');
+# oder besser in der php.ini setzen
 session_start();
-# session is alread started in one of the include files -> PHP Notice
 
 //echo $_SESSION["username"].":".$_SESSION["uid"]."<br>";
 if(empty($_SESSION["username"]) || empty($_SESSION["uid"]))
@@ -30,8 +30,8 @@ if(empty($_SESSION["username"]) || empty($_SESSION["uid"]))
 	echo "<p>Password:&nbsp;<input type=\"password\" name=\"password\" />".
 		 "<p><input type=\"checkbox\" name=\"remember me\" />remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".
 		 "<input type=\"submit\" value=\"login\" /></form></div>";
-# using single quotation marks around a string containing double quotation marks
-# saves the use of escaping backslashes
+# Wenn du einfache Anführungszeichen (single quotation marks) für einen String
+# verwendest, der doppelte Anführungszeichen enthält, kannst du das Escaping sparen
 	exit;
 }
 
@@ -43,12 +43,13 @@ if(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
 }
 
 $path = $_GET["path"];
-# although seen very often there is no sens in copying values from $_* arrays
-# to single variables. you only add complexity and camouflage the real origin of a value.
-# Sometimes it's argued simple variables are easier to insert into double quoted strings.
-# Yes, maybe, but you almost ever have to use htmlspecialchars() to prevent XSS,
-# so the function call leads to string concatenation and you don't need to insert
-# simple variables into ""-strings anymore.  
+# Obwohl es sehr oft zu sehen ist, Werte aus den $_*-Arrays in einfache Variablen
+# umzukopieren, ist dies nicht besonders sinnvoll. Es wird nur durch die zusätzlichen 
+# Variablen die Komplexität erhöht und der eigentliche Ursprung des Wertes versteckt. 
+# Manchmal wird argumentiert, dass es einfacher ist, $variablen in ""-Strings einzufügen. 
+# Ja, vielleicht, aber meistens muss man htmlspecialchars() verwenden, um XSS zu verhindern.
+# Man muss also den String unterbrechen, um die Funktion aufzurufen,
+# und hat keinen Vorteil von der einfachen Variable. 
  
 //if path is invalid, go to root directory of this user
 if(empty($path))
@@ -59,7 +60,8 @@ if($path[0] != "/")
 //validate path
 if(validate_dir_path($path) == FALSE)
 {
-# the standard says Location needs a full url http://...
+# Der Standard verlangt eine vollständige URL http://...
+# Die meisten Browser kommen jedoch auch mit der Kurzform zurecht.
 	header("Location: index.php");
 }
 
@@ -67,12 +69,15 @@ if(validate_dir_path($path) == FALSE)
 $p_dir = get_parent_dir($path);
 echo "<table width=100%>";
 echo "<tr>";
-# Prevent XSS! Make proper usage of escaping functions whenever you insert values
-# into a string of commands etc.
-# use rawurlencode() for insering data into URLs
-# use htmlspecialchars() for inserting data into HTML
-# use rawurlencode() first and htmlspecialchars() then if you insert data into a
-# URL which is inserted into HTML 
+# Verhindere XSS! Nimm immer Escaping Functionen wenn du Werte in einen String
+# oder ein Kommando/Statement einfügst.
+# Nimm htmlspecialchars() für das Einfügen von Daten in HTML
+# Nimm rawurlencode() für das Einfügen von Daten in URLs
+# Nimm rawurlencode() zuerst und dann htmlspecialchars(), wenn du Daten in eine URL
+# einfügst, die in HTML eingefügt wird.
+# echo '<p>' . htmlspecialchars($value) . '</p>';
+# $url = 'http://example.com/path=' . rawurlencode($value);
+# echo '<a href="' . htmlspecialchars($url) . '">htmlspecialchars($link_name)</a>'; 
 echo "<td width=40><a href=\"index.php?path=/\">home</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	  <td width=50><a href=\"index.php?path=$p_dir\">parent</a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	  <td><a href=\"index.php?path=$path\">refresh</a>&nbsp;&nbsp;&nbsp;&nbsp;$path</td>

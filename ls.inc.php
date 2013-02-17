@@ -4,12 +4,12 @@ require_once("validate_path.inc.php");
 
 function ls($root_dir, $dir)
 {
-	# you can use glob() instead of the combination of opendir()/readdir() 
+	# Du kannst glob() anstatt opendir()/readdir() verwenden. 
 	$h_dir = opendir("$root_dir/$dir");
 	list_info($root_dir, $dir, $h_dir);
 }
 
-# do you really need ths to be a separate function?
+# Muss das wirklich eine eigene Funktion sein?
 function list_info($root_dir, $pwd, $h_dir)
 {
 	echo "<table>";
@@ -21,9 +21,9 @@ function list_info($root_dir, $pwd, $h_dir)
 
 	while($file_name = readdir($h_dir))
 	{
-		# using glob() you can use a simple foreach
-		# and you can skip the check for both . and ..
-		# (but you will still need this test for hidden files)
+		# Mit glob() reicht ein einfaches foreach
+		# und der Test auf . und .. kann entfallen.
+		# (aber du brauchst ihn immer noch für hidden files)
 		//ignore hidden-files and "." and "..", 
 		if($file_name[0] == ".")
 			continue;
@@ -71,7 +71,7 @@ function list_info($root_dir, $pwd, $h_dir)
 	echo "</table>";
 }
 
-# you can use dirname() instead of this function 
+# Du kannst dirname() statt dieser Funktion verwenden 
 function get_parent_dir($dir)
 {
 	$p_dir = rtrim($dir, "/");
@@ -84,5 +84,5 @@ function get_parent_dir($dir)
 	return $p_dir;
 }
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>

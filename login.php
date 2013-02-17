@@ -5,9 +5,9 @@ require_once("db_conn.php");
 
 session_start();
 
-# this is not the right place to do escaping
-# you only need escaping for the output of values 
-# but it is obstructive for normal usage, the extra characters are of no use 
+# Hier ist nicht die richtige Stelle für Escaping. Escaping wird für Ausgabewerte benötigt,
+# es ist aber ungünstig für das normale Arbeiten mit den Werten. Die zusätzlichen
+# Escape-Zeichen stören nur.
 $username = htmlspecialchars($_POST["username"]);
 $password = htmlspecialchars($_POST["password"]);
 
@@ -23,6 +23,6 @@ if(!empty($username) && !empty($password))
 		echo "Wrong username or password!";
 }
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>
 

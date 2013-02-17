@@ -1,18 +1,18 @@
 <?php
 
-# use require_once, see login.inc.php
+# Nimm require_once, siehe login.inc.php
 require("config.inc.php");
 
-# don't just copy from $_*, use the original
+# vermeide einfache Kopien von $_*, nimm das Original
 $filename = $_GET['filename'];
 header("Content-type: text/html");
 header("Content-type: application/octet-stream");
 header("Content-Length: ".filesize($filename));
 header("Content-Disposition: attachment; filename=$filename");
-# use readfile() instead
+# Nimm readfile()
 $fp = fopen(ROOT_DIR."/".$filename, 'rb');
 fpassthru($fp);
 fclose($fp);
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>

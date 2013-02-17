@@ -1,20 +1,22 @@
 <?php
-# Don't use the p(ersistant) variant if you don't know all the implications.
-# You have to properly configure both the webserver and the mysql server
-# to handle persistant connections without drawbacks.
-# A MySQL connection establishment is fast enough, there is no real advantage
-# in using persistent connection, especially not in such a small application.
+# Nimm nicht die p(ersistant)-Version wenn du nicht alle Bedingungen dafür kennst.
+# Du musst den Webserver und den MySQL-Server ordentlich konfigurieren,
+# um persistente Verbindungen ohne Nachteile nutzen zu können.
+# Ein MySQL-Verbindungsaufbau ist schnell genug, es gibt keinen wirklichen Vorteil
+# für die p-Variante, besonders nicht in solch einer kleinen Anwendung.
 $mysql_conn = mysql_pconnect("localhost", "php_test", "php_test");
-# Always consider that a mysql function (in fact almost every function) can fail.
-# $mysql_conn is false in this, but false is not an accepted value for the
-# following mysql functions -> 
+# Berücksichtige immer, dass eine mysql-Function (eigentlich fast jede Funktion)
+# einen Fehler zurückgeben kann.
+# $mysql_conn ist false in diesem Fall, aber false ist kein gültiger Wert für
+# nachfolgende mysql Functionen -> 
 # Warning: mysql_select_db() expects parameter 2 to be resource, boolean given ...
 if(!mysql_select_db("php_test", $mysql_conn))
 	unset($mysql_conn);
 
-# what character encoding do you want to use to communicate with the mysql server?
-# use mysql_set_charset() or an equivalent
+# In welcher Zeichenkodierung (character encoding) möchtest du mit dem MySQL_Server
+# kommunizieren? Nimm mysql_set_charset()
 
+# mysql_*-Funktionen sollten nicht mehr verwendet werden, stattdessen mysqli oder PDO
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>

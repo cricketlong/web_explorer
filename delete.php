@@ -1,21 +1,21 @@
 <?php
 
-# use require_once, see login.inc.php
+# Nimm require_once, siehe login.inc.php
 require("config.inc.php");
 require("validate_path.inc.php");
 require("ls.inc.php");
 
 session_start();
 
-# don't just copy from $_*, use the original
+# vermeide einfache Kopien von $_*, nimm das Original
 $filename = $_GET['filename'];
-# Don't rely on the HTTP referer. This value is sometimes not existent, sometimes manipulated.
+# Der HTTP Referer ist nicht zuverlässig. Dieser Wert ist manchmal nicht vorhanden oder manipuliert
 $last_url = $_SERVER["HTTP_REFERER"];
 
 $full_path = ROOT_DIR."/".$_SESSION["uid"].$filename;
 
-# no need for == true here (and the following if)
-# "is it true that the path valid is?" In German: "doppelt gemoppelt" - done twice
+# "== true" ist hier nicht notwendig
+# "Ist es wahr, dass der Pfad valide ist?" Das ist "doppelt gemoppelt"
 if(validate_dir_path(get_parent_dir($filename)) == TRUE)
 {
 	if(file_exists($full_path) == TRUE)
@@ -24,7 +24,8 @@ if(validate_dir_path(get_parent_dir($filename)) == TRUE)
 	}
 }
 
+# Der Standard verlangt eine vollständige URL http://...
 header("Location: $last_url");
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>

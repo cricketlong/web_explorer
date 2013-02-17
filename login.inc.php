@@ -1,6 +1,6 @@
 <?php
 
-# use the _once to prevent
+# Nimm _once um diese Meldung zu verhindern:
 # Notice: Constant ROOT_DIR already defined ...
 require("config.inc.php");
 
@@ -11,17 +11,17 @@ function login($username, $password)
 
 	if($mysql_conn)
 	{
-		# Do you know "Exploits of a Mom?" http://xkcd.com/327/
-		# This code is open for a SQL injection attack
-		# Although mysql prevents the usage of ";" to concatenate multiple statements
-		# as in the comic, you still can use it to bypass the password check
-		# An input of ' or 1 -- makes the statement to return all rows.
-		# You only uses the first result - which is in most cases the admin's account... 
-		# Use mysql_real_escape_string(), but see next comment
+		# Kennst du "Exploits of a Mom?" http://xkcd.com/327/
+		# Der Code ist offen für einen SQL Injection Angriff
+		# MySQL verhindert zwar die Verwendung von ";", so dass keine Mehrfach-Statements 
+		# ausgeführt werden können, aber man kann immerhin noch die Passwort-Eingabe umgehen. 
+		# Eine Eingabe von ' or 1 -- lässt das Statement alle Daten zurückgeben.
+		# Dein Code verwendet nur den ersten Datensatz - aber der ist oftmals der Admin Account ... 
+		# Nimm mysql_real_escape_string()
 		$sql_str = "select * from webexp_user where username='$username' and password='$password'";
-		# the mysql_* functions are deprecated since PHP 5.5
-		# use mysqli_* or PDO instead
-		# also use Prepared Statements to prevent SQL injection 
+		# Die mysql_* functions sind seit PHP 5.5 "deprecated"
+		# Nimm stattdessen mysqli_* oder PDO 
+		# nimm außerdem Prepared Statements, um SQL Injection zu verhindern 
 		$result = mysql_query($sql_str, $mysql_conn);
 		if($result)
 		{
@@ -33,7 +33,7 @@ function login($username, $password)
 				$_SESSION["username"] = $row["username"];
 
 				//write cookies
-				# usage of !empty() is maybe more clear than isset()
+				# !empty() ist hier verständlicher als isset()
 				if(isset($_POST["remember_me"]))
 				{
 					//remember username
@@ -43,8 +43,8 @@ function login($username, $password)
 
 				return TRUE;
 			}
-			# there is no need to free ressources in PHP. PHP will care about itself
-			# you only need this in cases of long running scripts
+			# Resourcen freizugeben ist in PHP nicht notwendig. PHP macht selbst das am Script-Ende.
+			# Du brauchst das nur in lange laufenden Script auszuführen.
 			mysql_free_result($result);
 		}
 		//echo "<br>$sql_str";
@@ -53,5 +53,5 @@ function login($username, $password)
 	return FALSE;
 }
 
-# omit the closing tag at the end of a file. see config.inc.php
+# schließenden PHP-Tag am Dateiende kann/sollte man weglassen
 ?>
