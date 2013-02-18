@@ -1,27 +1,18 @@
 <?php
 
-require("config.inc.php");
-require("ls.inc.php");
-require("validate_path.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
 session_start();
 
-$filename = $_GET['filename'];
-if($filename[0] != "/")
-	$full_path = ROOT_DIR."/".$_SESSION['uid']."/".$filename;
-else
-	$full_path = ROOT_DIR."/".$_SESSION['uid'].$filename;
-
-if((empty($filename) == FALSE) && (validate_dir_path(get_parent_dir($filename)) == TRUE) && (file_exists($full_path)))
+if (!empty($_SESSION['uid']) and !empty($_GET['filename']))
 {
-	$content = file_get_contents($full_path);
-	if($content != FALSE)
-		print_r($content);
-}
-else
-{
-	header("Location: error.html");
-	exit;
+	$fullfilename = full_file_name($_SESSION['uid'], $_GET['filename']);
+	if (validate_dir_path($_SESSION['uid'], $fullfilename) && file_exists($fullfilename))
+	{
+		readfile($fullfilename);
+		exit;
+	}
 }
 
-?>
+readfile('error.html');

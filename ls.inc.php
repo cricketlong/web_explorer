@@ -1,27 +1,14 @@
 <?php
 
-require_once("validate_path.inc.php");
-
-function ls($root_dir, $dir)
-{
-	$h_dir = opendir("$root_dir/$dir");
-	list_info($root_dir, $dir, $h_dir);
-}
-
-function list_info($root_dir, $pwd, $h_dir)
-{
-	echo "<table>";
-	echo "<tr>";
-	echo	"<th align=left>file name</th>
-			<th align=left>modified time</th>
-			<th align=left>size</th>";
-	echo "</tr>";
-
-	while($file_name = readdir($h_dir))
-	{
-		//ignore hidden-files and "." and "..", 
-		if($file_name[0] == ".")
+function read_dir($root_dir, $dir) {
+	$items = [];
+	$pattern = '/' . trim($root_dir, '/') . '/' . trim($dir, '/') . '/*';
+	foreach (glob($pattern) as $item) {
+		if ($item[0] == '.')
 			continue;
+/*
+<<<<<<< HEAD
+
 
 		if($pwd == "/")
 			$path = "$root_dir/$file_name";
@@ -73,18 +60,24 @@ function list_info($root_dir, $pwd, $h_dir)
 	}
 
 	echo "</table>";
+=======
+*/
+		$attr = stat($item);
+		$items[] = [
+			'name' => $item,
+			'mtime' => $attr['mtime'],
+			'size' => $attr['size'],
+		];
+	} 
+	return $items;
+//>>>>>>> 7041a632f996f5a3ebb319c95a7f48af0d3e196e
 }
 
-function get_parent_dir($dir)
+function dir_item($file, $uid, $path)
 {
-	$p_dir = rtrim($dir, "/");
-	$p_dir = preg_split("/[\/]+/", $p_dir);
-	array_pop($p_dir);
-	$p_dir = implode($p_dir, "/");
-
-	if(empty($p_dir))
-		$p_dir = "/";
-	return $p_dir;
+	return '<a href="index.php?path=' . 
+		rawurlencode('/' . user_file_name($uid, $file)) .
+		'">' .
+		htmlspecialchars(user_file_name($uid, $file, $path) . '/') .
+		'</a>';
 }
-
-?>

@@ -1,14 +1,23 @@
 <?php
 
-require("config.inc.php");
+require_once 'config.inc.php';
+require_once 'utils.inc.php';
 
-$filename = $_GET['filename'];
-header("Content-type: text/html");
-header("Content-type: application/octet-stream");
-header("Content-Length: ".filesize($filename));
-header("Content-Disposition: attachment; filename=$filename");
-$fp = fopen(ROOT_DIR."/".$filename, 'rb');
-fpassthru($fp);
-fclose($fp);
+session_start();
 
-?>
+# test if logged in
+
+if (!empty($_SESSION['uid']) and !empty($_GET['filename']))
+{
+	$fullname = full_file_name($_SESSION['uid'], $_GET['filename']);
+	if (validate_dir_path($_SESSION['uid'], $fullname) && file_exists($fullname))
+	{
+		header("Content-Type: application/octet-stream");
+		header("Content-Length: ".filesize($fullname));
+		header("Content-Disposition: attachment; filename=" . basename($_GET['filename']));
+		readfile($fullname);
+		exit;
+	}
+}
+
+readfile('error.html');
