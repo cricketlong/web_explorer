@@ -1,0 +1,30 @@
+#ls
+{
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	border: 1px;
+	border-collapse:collapse;
+}
+
+#ls tr, #ls td 
+{
+font-size:1.0em;
+border:1px solid black;
+padding:3px 7px 2px 7px;
+}
+
+#ls th 
+{
+font-size:1.2em;
+text-align:center;
+border: 2px;
+padding-top:5px;
+padding-bottom:4px;
+background-color:#575952;
+color:#FFFFFF;
+}
+
+#ls tr.alt
+{
+color:#000000;
+background-color:#EAF2D3;
+}

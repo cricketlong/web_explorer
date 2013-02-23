@@ -60,7 +60,7 @@ function full_file_name($uid, $file) {
 function get_current_url() {
 	$scheme = !empty($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] :
 		((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == 'on') ? 'https' : 'http');
-	
+
 	return sprintf('%s://%s/%s/', $scheme, $_SERVER['HTTP_HOST'], trim(APP_PATH, '/'));
 }
 

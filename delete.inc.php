@@ -1,33 +1,33 @@
 <?php
 
-function is_dir_empty($dirname)
+function is_dir_empty($dir_name)
 {
-	if(readdir($dirname) === FALSE)
+	if(readdir($dir_name) === FALSE)
 		return TRUE;
 
 	return FALSE;
 }
 
-function rrmdir($dirname)
+function rrmdir($dir_name)
 {
-	$h_dir = opendir($dirname);
+	$h_dir = opendir($dir_name);
 	while($item = readdir($h_dir))
 	{
 		if($item[0] == ".")
 			continue;
-		//echo $dirname."/".$item."<br>";
-		if(is_file($dirname."/".$item))
-			unlink($dirname."/".$item);
-		if(is_dir($dirname."/".$item))
+		//echo $dir_name."/".$item."<br>";
+		if(is_file($dir_name."/".$item))
+			unlink($dir_name."/".$item);
+		if(is_dir($dir_name."/".$item))
 		{
-			if(is_dir_empty($dirname."/".$item))
-				rmdir($dirname."/".$item);
+			if(is_dir_empty($dir_name."/".$item))
+				rmdir($dir_name."/".$item);
 			else
-				rrmdir($dirname."/".$item);
+				rrmdir($dir_name."/".$item);
 		}
 	}
 
-	rmdir($dirname);
+	rmdir($dir_name);
 }
 
 ?>

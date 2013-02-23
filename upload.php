@@ -11,14 +11,6 @@ if (!empty($_SESSION['uid']) and !empty($_POST["pwd"])) {
 	if ($_FILES["file"]["error"] == UPLOAD_ERR_OK and
 			strpos($_FILES["file"]["name"], '/') === false)
 	{
-<<<<<<< HEAD
-		echo "<strong>\"$file_name\"</strong> has been successfully uploaded!<br>";
-		echo "file name: $file_name<br>";
-		echo "file size: $file_size<br>";
-		echo "file type: $file_type<br>";
-		//echo "moved to $path<br>";
-		//echo "pwd: $pwd<br>";
-=======
 		$file_name = $path . '/' . $_FILES["file"]["name"];
 		if (validate_dir_path($_SESSION['uid'], $file_name) and
 				!file_exists($file_name) and
@@ -27,7 +19,6 @@ if (!empty($_SESSION['uid']) and !empty($_POST["pwd"])) {
 			chmod($file_name, FILE_MODE);
 			$ok = true;
 		}
->>>>>>> 7041a632f996f5a3ebb319c95a7f48af0d3e196e
 	}
 }
 ?>

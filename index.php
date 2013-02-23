@@ -18,6 +18,9 @@ require_once 'utils.inc.php';
 
 session_start();
 
+//set timezone
+date_default_timezone_set('Europe/Berlin');
+
 if (!empty($_POST['username']) && !empty($_POST['password']))
 // POST check
 {
@@ -72,6 +75,7 @@ if (empty($print_login))
 <html>
 <head>
 	<title>Web Explorer</title>
+	<link rel=stylesheet href="style.css" type="text/css">
 </head>
 <body>
 <?php if (!empty($print_login)): ?>
@@ -89,19 +93,19 @@ if (empty($print_login))
 <?php else: ?>
 	<table style="width: 100%;">
 		<tr>
-			<td width="50"><a href="index.php?path=<?=rawurlencode('/') ?>">home</a></td>
-	  	<td width="50"><a href="index.php?path=<?=rawurlencode($parent_dir) ?>">parent</a></td>
-	  	<td><a href="index.php?path=<?=rawurlencode($path) ?>">refresh</a> <?=htmlspecialchars($path) ?></td>
+			<td width="50"><a href="index.php?path=<?=rawurlencode('/') ?>"><font size="4">home</font></a></td>
+	  	<td width="50"><a href="index.php?path=<?=rawurlencode($parent_dir) ?>"><font size="4">parent</font></a></td>
+	  	<td><a href="index.php?path=<?=rawurlencode($path) ?>"><font size="4">refresh</font></a> <?=htmlspecialchars($path) ?></td>
 	  	<td align=right></td>
-	  	<td align=right><?=htmlspecialchars($_SESSION["username"]) ?>&nbsp;<a href="logout.php">logout</a></td>
+	  	<td align=right><?=htmlspecialchars($_SESSION["username"]) ?>&nbsp;<a href="logout.php" align="right"><font size="4">logout</font></a></td>
 		</tr>
 	</table>
 <?php if ($items): ?>
-	<table border="1" style="margin: 1em 0;">
+	<table id="ls">
 		<tr>
-			<th align="left">file name</th>
-			<th align="left">modified time</th>
-			<th align="left">size</th>
+			<th>file name</th>
+			<th>modified time</th>
+			<th>size</th>
 			<th colspan="3">&nbsp;</th>
 		</tr>
 <?php foreach ($items as $item):
@@ -114,11 +118,11 @@ if (empty($print_login))
 			<td><?=date('d.m.Y H:i', $item['mtime']) ?></td>
 			<td><?=number_format($item['size']) ?></td>
 <?php if (!is_dir($item['name'])):?>
-			<td><a href="download.php?filename=<?=rawurlencode($userfilename) ?>">download</a></td>
-			<td><a href="viewfile.php?filename=<?=rawurlencode($userfilename) ?>">view</a></td>
-			<td><a href="delete.php?filename=<?=rawurlencode($userfilename) ?>">delete</a></td>
+			<td><a href="download.php?filename=<?=rawurlencode('/'.$userfilename) ?>">download</a></td>
+			<td><a href="viewfile.php?filename=<?=rawurlencode('/'.$userfilename) ?>">view</a></td>
+			<td><a href="delete.php?filename=<?=rawurlencode('/'.$userfilename) ?>">delete</a></td>
 <?php else:?>
-			<td colspan="3">&nbsp;</td>
+			<td><a href="delete.php?dirname=<?=rawurlencode('/'.$userfilename) ?>">delete</a></td>
 <?php endif;?>
 		</tr>
 <?php endforeach ?>	
@@ -128,6 +132,7 @@ if (empty($print_login))
 	<p>No items.</p>
 <?php endif ?>
 
+<br>
 <?php /* create directory */ ?>
 	<form name="mkdir" action="mkdir.php" method="post">
 	  directory:&nbsp;<input name="dir_name" size="16">
