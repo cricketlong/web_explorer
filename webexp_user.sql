@@ -16,52 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `counter`
---
-
-DROP TABLE IF EXISTS `counter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `counter` (
-  `count` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `counter`
---
-
-LOCK TABLES `counter` WRITE;
-/*!40000 ALTER TABLE `counter` DISABLE KEYS */;
-INSERT INTO `counter` VALUES (77);
-/*!40000 ALTER TABLE `counter` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user` (
-  `id` varchar(16) NOT NULL,
-  `name` varchar(32) NOT NULL,
-  `pwd` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `webexp_user`
 --
 
@@ -82,7 +36,7 @@ CREATE TABLE `webexp_user` (
 
 LOCK TABLES `webexp_user` WRITE;
 /*!40000 ALTER TABLE `webexp_user` DISABLE KEYS */;
-INSERT INTO `webexp_user` VALUES (1,'user0','e10adc3949ba59abbe56e057f20f883e'),(2,'user1','827ccb0eea8a706c4c34a16891f84e7b');
+INSERT INTO `webexp_user` VALUES (1,'test_user','e10adc3949ba59abbe56e057f20f883e');
 /*!40000 ALTER TABLE `webexp_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -95,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-14 22:11:26
+-- Dump completed on 2013-03-09 23:07:28
