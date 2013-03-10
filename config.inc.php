@@ -14,3 +14,6 @@ define('DB_PASSWORD', 'php_test');
 
 define('DIR_MODE', 0700);
 define('FILE_MODE', 0600);
+
+//file extensions of the files that are allowed to be uploaded
+define('UPLOAD_FILE_EXT', 'jpg|bmp|txt|pdf|doc|rar|bz2|gz');

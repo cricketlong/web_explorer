@@ -18,9 +18,7 @@ function validate_dir_path($uid, $dir)
 {
 	$user_dir = ROOT_DIR . '/' . $uid;
 	$full_path = $user_dir .  '/' . trim($dir, '/');
-#var_dump($user_dir);
-#var_dump($full_path);
-#var_dump(abspath($full_path));
+
 	return strpos(abspath($full_path), $user_dir) === 0;
 }
 

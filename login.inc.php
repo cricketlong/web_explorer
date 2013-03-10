@@ -30,7 +30,7 @@ function get_user($username, $md5password)
 	if ($mysql->connect_errno)
 	{
 		error_log("Connect failed: " . $mysql->connect_error);
-    return false;
+		return false;
 	}
 	$mysql->set_charset('utf8');
 

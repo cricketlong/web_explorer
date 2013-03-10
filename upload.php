@@ -2,23 +2,34 @@
 
 require_once 'config.inc.php';
 require_once 'utils.inc.php';
+require_once 'filter.inc.php';
 
 session_start();
 
-if (!empty($_SESSION['uid']) and !empty($_POST["pwd"])) {
+$error = "";
+
+if (!empty($_SESSION['uid']) and !empty($_POST["pwd"]))
+{
 	$path = full_file_name($_SESSION['uid'], $_POST["pwd"]);
 	
 	if ($_FILES["file"]["error"] == UPLOAD_ERR_OK and
 			strpos($_FILES["file"]["name"], '/') === false)
 	{
-		$file_name = $path . '/' . $_FILES["file"]["name"];
-		if (validate_dir_path($_SESSION['uid'], $file_name) and
-				!file_exists($file_name) and
-				move_uploaded_file($_FILES["file"]["tmp_name"], $file_name))
+		if(check_file_ext($_FILES['file']['name']))
 		{
-			chmod($file_name, FILE_MODE);
-			$ok = true;
+			$file_name = $path . '/' . $_FILES["file"]["name"];
+			if (validate_dir_path($_SESSION['uid'], $file_name) and
+					!file_exists($file_name) and
+					move_uploaded_file($_FILES["file"]["tmp_name"], $file_name))
+			{
+				chmod($file_name, FILE_MODE);
+				$ok = true;
+			}
+			else
+				$error = 'Error occured while uploading!';
 		}
+		else
+			$error = 'This file extension is not allowed';
 	}
 }
 ?>
@@ -33,7 +44,7 @@ if (!empty($_SESSION['uid']) and !empty($_POST["pwd"])) {
 	<p>file size: <?=number_format($_FILES["file"]["size"]) ?></p>
 	<p>file type: <?=htmlspecialchars($_FILES["file"]["type"]) ?></p>
 <?php else: ?>
-	<p style="color:red;">Error occured while uploading!</p>
+	<p style="color:red;"><?php echo $error ?></p>
 <?php endif ?>
 	<p><a href="index.php">back to index</a></p>
 </body>
