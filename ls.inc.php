@@ -21,6 +21,6 @@ function dir_item($file, $uid, $path)
 	return '<a href="index.php?path=' . 
 		rawurlencode('/' . user_file_name($uid, $file)) .
 		'">' .
-		htmlspecialchars(user_file_name($uid, $file, $path) . '/') .
+		htmlspecialchars(user_file_name($uid, $file, $path)) .
 		'</a>';
 }

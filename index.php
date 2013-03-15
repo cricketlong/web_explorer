@@ -1,16 +1,5 @@
 <?php
 
-# Dies ist eine Version, in der ich nur den vorhandenen Code mehr oder weniger
-# anders geschrieben habe. Wenn ich es komplett selbst schreiben müsste,
-# würde ich noch mehr Dinge anders lösen.
-#
-# Wichtig ist vor allem eine Trennung nach Business Logic und Output Logic.
-# Die Business Logic (Geschäfslogik) sammelt alle Daten, verarbeitet sie und
-# stellt die für die Ausgabe notwendigen Daten bereit.
-# Die Ausgabelogik erstellt dann mit diesen Daten das HTML.
-#
-# (Ich verwende immer '' (single quotation marks) für einfache Strings.)
-
 require_once "config.inc.php";
 require_once "ls.inc.php";
 require_once "login.inc.php";
@@ -41,8 +30,8 @@ if (!empty($_POST['username']) && !empty($_POST['password']))
 	}
 }
 elseif(!empty($_COOKIE["username"]) && !empty($_COOKIE["password"]))
-// check cookie, whether this user has been remembered for auto login
 {
+	// check cookie, whether this user has been remembered for auto login
 	if (!login($_COOKIE["username"], $_COOKIE["password"]))
 	{
 		$print_login = true;
@@ -75,7 +64,38 @@ if (empty($print_login))
 <html>
 <head>
 	<title>Web Explorer</title>
-	<link rel=stylesheet href="style.css" type="text/css">
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="style.css" type="text/css">
+	<script src="jquery-1.9.1.js"></script>
+	<script src="jquery-ui.js"></script>
+	<script>
+		$(function(){
+			/* rename dialog */
+			$('a').click(function(){
+				if($(this).attr('id') == 'rename'){
+					$('#old_filename').val($(this).parent().parent().children(':first').text());
+					$('#new_filename').val($(this).parent().parent().children(':first').text());
+					$('#rename_dialog').dialog('open');
+				}
+			});
+
+			$('#rename_dialog').dialog({
+				autoOpen: false,
+				width: 300,
+				modal: true,
+				buttons: {
+					'confirm': function(){
+						$.post('rename.php', {	path: $('#label_cur_path').text(),
+												old_filename: $('#old_filename').val(),
+												new_filename: $('#new_filename').val() });
+						$(this).dialog('close');
+						location.reload();
+					}
+				}
+			});
+		});
+
+	</script>
 </head>
 <body>
 <?php if (!empty($print_login)): ?>
@@ -95,7 +115,8 @@ if (empty($print_login))
 		<tr>
 			<td width="50"><a href="index.php?path=<?=rawurlencode('/') ?>"><font size="4">home</font></a></td>
 	  	<td width="50"><a href="index.php?path=<?=rawurlencode($parent_dir) ?>"><font size="4">parent</font></a></td>
-	  	<td><a href="index.php?path=<?=rawurlencode($path) ?>"><font size="4">refresh</font></a> <?=htmlspecialchars($path) ?></td>
+	  	<td><a href="index.php?path=<?=rawurlencode($path) ?>"><font size="4">refresh</font></a>
+			<label id="label_cur_path"><?=htmlspecialchars($path) ?></label></td>
 	  	<td align=right></td>
 	  	<td align=right><?=htmlspecialchars($_SESSION["username"]) ?>&nbsp;<a href="logout.php" align="right"><font size="4">logout</font></a></td>
 		</tr>
@@ -106,7 +127,7 @@ if (empty($print_login))
 			<th>file name</th>
 			<th>modified time</th>
 			<th>size</th>
-			<th colspan="3">&nbsp;</th>
+			<th colspan="4">&nbsp;</th>
 		</tr>
 <?php foreach ($items as $item):
 	$userfilename = user_file_name($_SESSION['uid'], $item['name']);
@@ -122,8 +143,10 @@ if (empty($print_login))
 			<td><a href="viewfile.php?filename=<?=rawurlencode('/'.$userfilename) ?>">view</a></td>
 			<td><a href="delete.php?filename=<?=rawurlencode('/'.$userfilename) ?>">delete</a></td>
 <?php else:?>
+			<td colspan="2"></td>
 			<td><a href="delete.php?dirname=<?=rawurlencode('/'.$userfilename) ?>">delete</a></td>
 <?php endif;?>
+			<td><a id="rename" href="javascript:void(0);">rename</a></td>
 		</tr>
 <?php endforeach ?>	
 	</table>
@@ -149,5 +172,13 @@ if (empty($print_login))
 	</form>
 	
 <?php endif; ?>
+
+<?php /* rename dialog div */ ?>
+<div id="rename_dialog" title="rename file">
+<form>
+	<input id="old_filename" type="hidden" value=""></input>
+	<input id="new_filename" value=""></input>
+</form>
+
 </body>
 </html>
