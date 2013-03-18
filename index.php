@@ -10,10 +10,9 @@ session_start();
 //set timezone
 date_default_timezone_set('Europe/Berlin');
 
-if (!empty($_POST['username']) && !empty($_POST['password']))
-// POST check
+if(!empty($_POST['username']) && !empty($_POST['password']))
 {
-	if (!login($_POST['username'], md5($_POST['password'])))
+	if(!login($_POST['username'], $_POST['password']))
 	{
 		$print_login = true;
 		$error = "Wrong username or password!";
@@ -21,11 +20,11 @@ if (!empty($_POST['username']) && !empty($_POST['password']))
 	else
 	{
 		//write cookies
-		if (!empty($_POST["remember_me"]))
+		if(!empty($_POST["remember_me"]))
 		{
 			//remember username
 			setcookie("username", $username, time() + COOKIE_EXPIRE_TIME);
-			setcookie("password", md5($_POST['password']), time() + COOKIE_EXPIRE_TIME);
+			setcookie("password", $_POST['password'], time() + COOKIE_EXPIRE_TIME);
 		}
 	}
 }
@@ -68,6 +67,7 @@ if (empty($print_login))
 	<link rel="stylesheet" href="style.css" type="text/css">
 	<script src="jquery-1.9.1.js"></script>
 	<script src="jquery-ui.js"></script>
+	<script src="md5.js"></script>
 	<script>
 		$(function(){
 			/* rename dialog */
@@ -95,19 +95,26 @@ if (empty($print_login))
 			});
 		});
 
+		function login_submit()
+		{
+			document.login_form.password.value = CryptoJS.MD5(document.login_form.password.value);
+			document.login_form.submit();
+		}
+
 	</script>
 </head>
 <body>
 <?php if (!empty($print_login)): ?>
-	<form action="" method="post" style="text-align: center;">
+	<form name="login_form" action="index.php" method="post" style="text-align: center;">
 		<fieldset style="display: inline-block;">
 <?php if (!empty($error)): ?>
 			<p style="color:red;"><?=htmlspecialchars($error) ?></p>
 <?php endif ?>		
 			<p>Username:&nbsp;<input name="username" value="<?=
 				isset($_COOKIE["username"]) ? $_COOKIE["username"] : '' ?>"></p>
-			<p>Password:&nbsp;<input type="password" name="password"></p>
-			<p><input type="checkbox" name="remember me">remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="login"></p>
+			<p>Password:&nbsp;<input type="password" name="password" value="" /></p>
+			<p><input type="checkbox" name="remember me"/ >remember me&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="submit" value="login" onClick="login_submit();" /></p>
 		</fieldset>
 	</form>
 <?php else: ?>
